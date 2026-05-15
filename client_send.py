@@ -139,7 +139,7 @@ def check_packet(rtp_packet: bytes, addr: tuple[str, int]) -> bool:
 
     ip = addr[0]
     port = addr[1]
-    ssrc = struct.unpack('!I', rtp_packet[4:8])[0]
+    ssrc = struct.unpack('!I', rtp_packet[8:12])[0]
 
     if user_lookup.get(ssrc) == None:
         print(f'new user connected: {ssrc}')

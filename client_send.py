@@ -92,10 +92,6 @@ def init_rtp() -> bytes:
 def modify_rtp_header(base_rtp: bytes, data: bytes, seq_num: int) -> bytes:
     base_rtp = bytearray(base_rtp)
 
-    # if seq num is close to the 16 bits integer limits, I let the seq_num just be 0
-    if seq_num == 65000:
-        seq_num = 0
-    
     base_rtp[2:4] = struct.pack('!H', seq_num)
 
     samples_size = CHUNK
@@ -124,13 +120,18 @@ def check_packet(rtp_packet: bytes, addr: tuple[str, int]) -> bool:
     
     # drop the packet if current seq is less than lst seq
     if last_seq_num > seq_num:
-        return False
+        if last_seq_num >= 65535 and seq_num == 0:
+            pass
+        else:
+            return False
 
     # print out error if current seq is greater than last seq a lot
     if seq_num > last_seq_num + 10:
         print('Network connection unstable: at least 10 packets have lost')
 
     last_seq_num = seq_num
+
+    print(f'seq_num: {seq_num} last_seq_num: {last_seq_num}')
 
     # map the user id with ip addr
     # currently i just trust the packet, and do not verify the source
@@ -144,10 +145,11 @@ def check_packet(rtp_packet: bytes, addr: tuple[str, int]) -> bool:
         print(f'new user connected: {ssrc}')
         user_lookup[ssrc] = user_map(ip=ip, port=port, ssrc=ssrc)
     
+    return True
 
 
 def sendingThread(serverAddr: str, portNum: int):
-    stream_in = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, input_device_index=0, frames_per_buffer=CHUNK)
+    stream_in = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, input_device_index=6, frames_per_buffer=CHUNK)
     base_rtp = init_rtp()
     seq_num = 0
 
@@ -156,9 +158,13 @@ def sendingThread(serverAddr: str, portNum: int):
 
         data = modify_rtp_header(base_rtp, data, seq_num)
 
+        #print(f'data size: {len(data)}')
+
+        base_rtp = data[:12]
+
         socket.sendto(data, (serverAddr, portNum))
 
-        seq_num += 1
+        seq_num = (seq_num + 1) % 65536
 
 
 
@@ -176,7 +182,7 @@ def recievingThread():
             recv_queue.put(recv_data)
 
 def playing_thread():
-    stream_out = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, output=True, output_device_index=1, frames_per_buffer=CHUNK)
+    stream_out = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, output=True, output_device_index=6, frames_per_buffer=CHUNK)
 
     buffering = True
 
@@ -202,12 +208,12 @@ def playing_thread():
             buffering = False
     
 
-t_send = threading.Thread(target=sendingThread, args=('localhost', 5500))
+t_send = threading.Thread(target=sendingThread, args=('10.10.1.114', 5500))
 t_recv = threading.Thread(target=recievingThread)
 t_playing = threading.Thread(target=playing_thread)
 #t_send.daemon = True
 # t_recv.daemon = True
 
 t_send.start()
-#t_recv.start()
-#t_playing.start()
+t_recv.start()
+t_playing.start()

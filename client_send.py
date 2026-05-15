@@ -121,6 +121,7 @@ def check_packet(rtp_packet: bytes, addr: tuple[str, int]) -> bool:
     seq_num = struct.unpack('!H', rtp_packet[2:4])[0]
     # change seq_num into deciaml form
 
+    
     # drop the packet if current seq is less than lst seq
     if last_seq_num > seq_num:
         return False
@@ -154,8 +155,6 @@ def sendingThread(serverAddr: str, portNum: int):
         data = stream_in.read(CHUNK)
 
         data = modify_rtp_header(base_rtp, data, seq_num)
-
-        print(f'data size: {len(data)}')
 
         socket.sendto(data, (serverAddr, portNum))
 
@@ -210,5 +209,5 @@ t_playing = threading.Thread(target=playing_thread)
 # t_recv.daemon = True
 
 t_send.start()
-t_recv.start()
-t_playing.start()
+#t_recv.start()
+#t_playing.start()

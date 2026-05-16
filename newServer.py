@@ -119,6 +119,4 @@ try:
 except KeyboardInterrupt:
     print('\n(⌐■_■)Server is shutting down (⌐■_■)')
 finally:
-    send.close()
-    recieve.close()
-    check.close()
+    socket.close()

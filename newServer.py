@@ -1,6 +1,7 @@
 import datetime
 from socket import *
 #import socket
+import sys
 import threading
 from queue import Queue
 from dataclasses import dataclass
@@ -103,14 +104,21 @@ def check_timeout():
 
 send = threading.Thread(target=sendingThread)
 recieve = threading.Thread(target=recievingThread)
+check = threading.Thread(target=check_timeout)
 
 send.daemon = True
 recieve.daemon = True
 
 send.start()
 recieve.start()
+check.start()
 
-send.join()
-recieve.join()
-
-socket.close()
+try:
+    while True:
+        time.sleep(1)
+except KeyboardInterrupt:
+    print('\n(⌐■_■)Server is shutting down (⌐■_■)')
+finally:
+    send.close()
+    recieve.close()
+    check.close()

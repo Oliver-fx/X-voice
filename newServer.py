@@ -106,12 +106,15 @@ send = threading.Thread(target=sendingThread)
 recieve = threading.Thread(target=recievingThread)
 check = threading.Thread(target=check_timeout)
 
+
 send.daemon = True
 recieve.daemon = True
+check.daemon = True
 
 send.start()
 recieve.start()
 check.start()
+
 
 try:
     while True:

@@ -51,23 +51,28 @@ def sendingThread():
             clientAddr = queObj.clientAddr
             data = queObj.data
             with client_list_lock:
-                exist = any(obj.clientAddr == clientAddr for obj in client_list)
+                target_client = None
+                for obj in client_list:
+                    if obj.clientAddr == clientAddr:
+                        target_client = obj
+                        break
 
-                if not exist:
+                if target_client is None:
                     # construct ClientOBJ
-                    c_obj = Client(clientAddr=clientAddr, timestamp=time.time())
-                    client_list.append(c_obj)
+                    target_client = Client(clientAddr=clientAddr, timestamp=time.time())
+                    client_list.append(target_client)
                     print('append succced')
-                print(client_list)
+                else:
+                    target_client.timestamp = time.time()
+                #print(client_list)
 
                 for obj in client_list:
                     addr = obj.clientAddr
                     if (addr != clientAddr):
                         socket.sendto(data, addr)
-                        print(f'send to addr: {addr}')
-                    elif addr == clientAddr:
-                        obj.timestamp = time.time()
-                        print(f'update time stamp: {addr}')
+                        #print(f'send to addr: {addr}')
+                    #else:
+                        #print(f'update time stamp: {addr}')
                         # !!! FOR TESTING CHANGE THIS LINE LATER
                         #socket.sendto(data, addr)
         # else:

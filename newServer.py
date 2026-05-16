@@ -30,9 +30,11 @@ class Client:
     timestamp: float = None
 
 client_list: List[Client] = []
+client_list_lock = threading.Lock()
 q = Queue(maxsize=0)
 
 PORT = 5500
+TIMEOUT = 3
 
 socket = socket(AF_INET, SOCK_DGRAM)
 
@@ -47,24 +49,24 @@ def sendingThread():
             queObj:QueueData = q.get()
             clientAddr = queObj.clientAddr
             data = queObj.data
+            with client_list_lock:
+                exist = any(obj.clientAddr == clientAddr for obj in client_list)
 
-            exist = any(obj.clientAddr == clientAddr for obj in client_list)
+                if not exist:
+                    # construct ClientOBJ
+                    c_obj = Client(clientAddr=clientAddr, timestamp=time.time())
+                    client_list.append(c_obj)
+                    print('append succced')
+                print(client_list)
 
-            if not exist:
-                # construct ClientOBJ
-                c_obj = Client(clientAddr=clientAddr, timestamp=time.time())
-                client_list.append(c_obj)
-                print('append succced')
-            print(client_list)
-
-            for obj in client_list:
-                addr = obj.clientAddr
-                if (addr != clientAddr):
-                    socket.sendto(data, addr)
-                elif addr == clientAddr:
-                    obj.timestamp = time.time()
-                    # !!! FOR TESTING CHANGE THIS LINE LATER
-                    #socket.sendto(data, addr)
+                for obj in client_list:
+                    addr = obj.clientAddr
+                    if (addr != clientAddr):
+                        socket.sendto(data, addr)
+                    elif addr == clientAddr:
+                        obj.timestamp = time.time()
+                        # !!! FOR TESTING CHANGE THIS LINE LATER
+                        #socket.sendto(data, addr)
         # else:
         #     client_list[:] = []
 
@@ -79,10 +81,25 @@ def recievingThread():
         #put into the queue
         q.put(queObj)
 
-        #check dead user
-        if (time.time() - check_time > 10):
-            client_list[:] = [obj for obj in client_list if abs(obj.timestamp - time.time()) >= 5]
-            check_time = time.time()
+
+def check_timeout():
+    while True:
+        time.sleep(10)
+        curr_time = time.time()
+
+        with client_list_lock:
+            active:List[Client] = []
+            timeout:List[Client] = []
+            
+            for c in client_list:
+                if (curr_time - c.timestamp) >= TIMEOUT:
+                    timeout.append(c)
+                else:
+                    active.append(c)
+            
+            client_list[:] = active
+
+            timeout.clear()
 
 send = threading.Thread(target=sendingThread)
 recieve = threading.Thread(target=recievingThread)

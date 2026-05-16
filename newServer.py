@@ -64,8 +64,10 @@ def sendingThread():
                     addr = obj.clientAddr
                     if (addr != clientAddr):
                         socket.sendto(data, addr)
+                        print(f'send to addr: {addr}')
                     elif addr == clientAddr:
                         obj.timestamp = time.time()
+                        print(f'update time stamp: {addr}')
                         # !!! FOR TESTING CHANGE THIS LINE LATER
                         #socket.sendto(data, addr)
         # else:

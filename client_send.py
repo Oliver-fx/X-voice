@@ -8,10 +8,12 @@ import struct
 import secrets
 import queue
 
-CHUNK = 120
+CHUNK = 960
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 48000
+SERVER_IP = 'your server ip {str}'
+SERVER_PORT = 'your server port {int}'
 
 @dataclass
 class user_map:
@@ -208,7 +210,7 @@ def playing_thread():
             buffering = False
     
 
-t_send = threading.Thread(target=sendingThread, args=('10.10.1.114', 5500))
+t_send = threading.Thread(target=sendingThread, args=(SERVER_IP, SERVER_PORT))
 t_recv = threading.Thread(target=recievingThread)
 t_playing = threading.Thread(target=playing_thread)
 #t_send.daemon = True

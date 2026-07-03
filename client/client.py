@@ -7,13 +7,53 @@ import opuslib
 import struct 
 import secrets
 import queue
+import sys
+from pylibsrtp import Policy, Session
 
+if len(sys.argv) == 4:
+    srtp_key_hex = sys.argv[1]
+    ip = sys.argv[2]
+    port = sys.argv[3]
+else:
+    print("Not enough arugement passed in. Program stopped")
+    sys.exit()
+
+p = pyaudio.PyAudio()
+
+# get default input/output device info
+
+try:
+    # Automatically get the system default Microphone info
+    default_input = p.get_default_input_device_info()
+    input_index = default_input['index']
+    print(f"Using Default MIC: (Index {input_index})")
+except IOError:
+    print("No default microphone found!")
+    nput_index = None
+    sys.exit()
+
+try:
+    # Automatically get the system default Microphone info
+    ouput_dev = p.get_default_output_device_info()
+    output_index = ouput_dev['index']
+    print(f"Using Default SPEAKER: (Index {output_index})")
+except IOError:
+    print("No default speaker found!")
+    nput_index = None
+    sys.exit()
+    
+
+
+MASTER_KEY = bytes.fromhex(srtp_key_hex)
 CHUNK = 960
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 48000
-SERVER_IP = 'your server ip {str}'
-SERVER_PORT = 'your server port {int}'
+DEFAULT_OUTPUT = output_index
+DEFAULT_INPUT = input_index
+SERVER_IP = ip
+SERVER_PORT = int(port)
+
 
 @dataclass
 class user_map:
@@ -25,10 +65,15 @@ user_lookup: dict[int, user_map] = {}
 
 recv_queue = queue.Queue(maxsize=20)
 
-encoder = opuslib.Encoder(RATE, CHANNELS, opuslib.APPLICATION_VOIP)
+encoder = opuslib.Encoder(RATE, CHANNELS, opuslib.APPLICATION_AUDIO)
 decoder = opuslib.Decoder(RATE, CHANNELS)
 
-p = pyaudio.PyAudio()
+# configure the encoder
+
+encoder.complexity = 10
+
+encoder.vbr = 1
+
 
 print("\n--- Available Audio Devices ---")
 for i in range(p.get_device_count()):
@@ -50,6 +95,7 @@ socket = socket(AF_INET, SOCK_DGRAM)
 last_seq_num = 0
 
 '''
+This prject does ot use SCRC, which is the minimum header for rtp it only contains 12 bytes
 0                   1                   2                   3
 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -151,20 +197,22 @@ def check_packet(rtp_packet: bytes, addr: tuple[str, int]) -> bool:
 
 
 def sendingThread(serverAddr: str, portNum: int):
-    stream_in = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, input_device_index=6, frames_per_buffer=CHUNK)
+    stream_in = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, input_device_index=DEFAULT_INPUT, frames_per_buffer=CHUNK)
     base_rtp = init_rtp()
     seq_num = 0
 
+    tx_policy = Policy(key=MASTER_KEY, ssrc_type=Policy.SSRC_ANY_OUTBOUND)
+    tx_session = Session(policy=tx_policy)
     while True:
         data = stream_in.read(CHUNK)
 
         data = modify_rtp_header(base_rtp, data, seq_num)
 
-        #print(f'data size: {len(data)}')
+        srtp_data = tx_session.protect(data)
+        #print(f'data size: {len(data)}, {len(srtp_data)}')
+        #base_rtp = data[:12]
 
-        base_rtp = data[:12]
-
-        socket.sendto(data, (serverAddr, portNum))
+        socket.sendto(srtp_data, (serverAddr, portNum))
 
         seq_num = (seq_num + 1) % 65536
 
@@ -172,19 +220,24 @@ def sendingThread(serverAddr: str, portNum: int):
 
 def recievingThread():
 
+    rx_policy = Policy(key=MASTER_KEY, ssrc_type=Policy.SSRC_ANY_INBOUND)
+    rx_session = Session(policy=rx_policy)
     while True:
 
         recv_data, addr = socket.recvfrom(CHUNK)
 
-        check = check_packet(recv_data, addr)
+        
+        rtp_data = rx_session.unprotect(recv_data)
+
+        check = check_packet(rtp_data, addr)
 
         if check == False:
             continue
         else:
-            recv_queue.put(recv_data)
+            recv_queue.put(rtp_data)
 
 def playing_thread():
-    stream_out = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, output=True, output_device_index=6, frames_per_buffer=CHUNK)
+    stream_out = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, output=True, output_device_index=DEFAULT_OUTPUT, frames_per_buffer=CHUNK)
 
     buffering = True
 
@@ -219,3 +272,11 @@ t_playing = threading.Thread(target=playing_thread)
 t_send.start()
 t_recv.start()
 t_playing.start()
+
+try:
+    while True:
+        time.sleep(1)
+except KeyboardInterrupt:
+    print('\n(⌐■_■)Client is shutting down (⌐■_■)')
+finally:
+    socket.close()

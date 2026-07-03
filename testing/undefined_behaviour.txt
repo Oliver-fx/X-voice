@@ -1,0 +1,11 @@
+1. when user1 called user2, and user2 does not answer. Then, user2 call user1, user1 gets 
+error messages like this:
+server disconnected
+call not answered
+server disconnected
+call not answered
+
+Possible fix: debug from server recieving side, because client side prints server disconnected,
+that triggered by no data sent from server. So, print the command this client sent to server,
+and see what is happeneing
+###FIXED###

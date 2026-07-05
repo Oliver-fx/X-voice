@@ -216,10 +216,11 @@ def handle_request(s_socket):
                         s_socket.sendall(message.encode('utf-8'))
 
                         # spawn new udp program
-                        universal_count += 1
-                        UDP_SERVER_PORT = int(UDP_SERVER_PORT) + universal_count
                         server_process = subprocess.Popen(["python3", "udp_server.py", str(UDP_SERVER_PORT)])
                         print("udp_server is running")
+                        # add a port for next connection
+                        universal_count += 1
+                        UDP_SERVER_PORT = int(UDP_SERVER_PORT) + universal_count
                     case "disconnect":
                         server_process.kill()
                         server_process.wait()

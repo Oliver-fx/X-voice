@@ -201,7 +201,7 @@ def handle_request(s_socket):
 
                     case "get_addr":
                         message = "ac\n"
-                        message = message + "addr\n" + UDP_SERVER_IP + "\n" + UDP_SERVER_PORT + '\n'
+                        message = message + "addr\n" + UDP_SERVER_IP + "\n" + str(UDP_SERVER_PORT) + '\n'
 
                         dest_s_socket.sendall(message.encode('utf-8'))
                         s_socket.sendall(message.encode('utf-8'))

@@ -44,6 +44,7 @@ server_process = None
 def handle_request(s_socket):
     global server_process
     global UDP_SERVER_PORT
+    global universal_count
     ssrc = None
     while True:
         try:

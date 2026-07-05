@@ -12,7 +12,7 @@ import subprocess
 import time
 
 #'170.64.145.153'
-SERVER_IP = 'localhost'
+SERVER_IP = '170.64.130.129'
 SERVER_PORT = 5063
 
 MTU = 1024
@@ -202,5 +202,5 @@ t_recv = threading.Thread(target=recv_thread)
 t_recv.daemon = True
 t_recv.start()
 
-eel.start('index.html', mode='chrome', size=(700,500), port=0)
+eel.start('index.html', mode='custom', size=(700,500), port=9000, cmdline_args=['open', '-a', 'Safari', 'http://localhost:9000/index.html'])
 #'index.html',

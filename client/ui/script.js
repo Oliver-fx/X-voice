@@ -77,7 +77,7 @@ function displayConnectionResult(status) {
         name_input_box.disabled = false
     } else if (status.includes("calling from")) {
         //TODO tell the html to show up a button for user to answer the call
-        let timeLeft = 5
+        let timeLeft = 30
         // disable name input box and button
         button.disabled = true
         name_input_box.disabled = true
@@ -107,7 +107,7 @@ function displayConnectionResult(status) {
         <span id="countdown">30s remaining: 30s</span>
         `
         let countdown = document.getElementById('countdown')
-        let timeLeft = 5
+        let timeLeft = 30
 
         timer = setInterval(() => {
             timeLeft--;

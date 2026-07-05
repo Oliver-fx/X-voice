@@ -279,4 +279,5 @@ try:
 except KeyboardInterrupt:
     print('\n(⌐■_■)Client is shutting down (⌐■_■)')
 finally:
+    p.terminate()
     socket.close()

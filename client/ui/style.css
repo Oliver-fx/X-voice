@@ -91,3 +91,52 @@
     flex-direction: column;
     gap: 15px;
 }
+
+
+/* starting page */
+
+.starting {
+    background-color: #9da391;
+}
+
+.middle {
+    position:absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-60%, -50%);
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#ip-input {
+    background-color:beige;
+    border: 2px solid #9da391;
+    background-color: #9da391;
+    color:white;
+    outline: none;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    width: 130px;
+}
+
+#ip-input::placeholder {
+    color: #defa89;
+}
+
+#connect-button {
+    background-color: #9da391;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s;
+    border-radius: 50px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 80px;
+    font-size: 15px;
+    color: #defa89;
+}
+
+#connect-button:hover {
+    background-color:#defa89;
+}

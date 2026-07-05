@@ -12,11 +12,11 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CERT_PATH = os.path.join(BASE_DIR, "cert.pem")
 KEY_PATH = os.path.join(BASE_DIR, "key.pem")
 DEFAULT_IP = "0.0.0.0"
-DEFAULT_PORT = 5063
+DEFAULT_PORT = 5062
 SUCCESS_RETURN = 'ok'
 MTU = 1024
-UDP_SERVER_IP = "localhost"
-UDP_SERVER_PORT = "10001"
+UDP_SERVER_IP = "self define"
+UDP_SERVER_PORT = "self define"
 
 
 @dataclass

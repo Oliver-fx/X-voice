@@ -15,8 +15,10 @@ DEFAULT_IP = "0.0.0.0"
 DEFAULT_PORT = 5062
 SUCCESS_RETURN = 'ok'
 MTU = 1024
-UDP_SERVER_IP = "self define"
-UDP_SERVER_PORT = "self define"
+UDP_SERVER_IP = "self define (str)"
+UDP_SERVER_PORT = "self define (int)"
+
+universal_count = 0
 
 
 @dataclass
@@ -212,7 +214,8 @@ def handle_request(s_socket):
                         s_socket.sendall(message.encode('utf-8'))
 
                         # spawn new udp program
-                        server_process = subprocess.Popen(["python3", "udp_server.py", UDP_SERVER_PORT])
+                        universal_count += 1
+                        server_process = subprocess.Popen(["python3", "udp_server.py", UDP_SERVER_PORT + universal_count])
                         print("udp_server is running")
                     case "disconnect":
                         server_process.kill()

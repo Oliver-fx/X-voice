@@ -215,7 +215,8 @@ def handle_request(s_socket):
 
                         # spawn new udp program
                         universal_count += 1
-                        server_process = subprocess.Popen(["python3", "udp_server.py", UDP_SERVER_PORT + universal_count])
+                        UDP_SERVER_PORT = int(UDP_SERVER_PORT) + universal_count
+                        server_process = subprocess.Popen(["python3", "udp_server.py", str(UDP_SERVER_PORT)])
                         print("udp_server is running")
                     case "disconnect":
                         server_process.kill()

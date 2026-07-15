@@ -43,7 +43,7 @@ def connection_json_m(name:str) -> str:
     return json_packet
 
 def answer_call_json_m(status:str) -> str:
-    if status in ('spawn_udp_program', 'disconnected'):
+    if status in ('spawn_udp_program', 'disconnect'):
         json_message = {
             "name" : dest_name,
             "status": status,
@@ -252,5 +252,5 @@ eel.init('ui')
 # for linux
 eel.start('startPage.html', mode='chrome', size=(700, 500), port=0)
 # for apple
-eel.start('startPage.html', mode='custom', size=(700,500), port=9000, cmdline_args=['open', '-a', 'Safari', 'http://localhost:9000/startPage.html'])
+#eel.start('startPage.html', mode='custom', size=(700,500), port=9000, cmdline_args=['open', '-a', 'Safari', 'http://localhost:9000/startPage.html'])
 #'index.html',

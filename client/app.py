@@ -200,6 +200,7 @@ def recv_thread():
 t_recv = threading.Thread(target=recv_thread)
 t_recv.daemon = True
 
+
 #block the program until user input the ip addr
 @eel.expose
 def starting_page(ip: str):
@@ -247,5 +248,5 @@ def starting_page(ip: str):
         return False
     
 eel.init('ui')
-eel.start('startPage.html', mode='chrome', size=(700,500), port=0)
+eel.start('startPage.html', mode='custom', size=(700,500), port=9000, cmdline_args=['open', '-a', 'Safari', 'http://localhost:9000/startPage.html'])
 #'index.html',

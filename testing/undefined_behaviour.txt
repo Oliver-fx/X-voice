@@ -9,3 +9,5 @@ Possible fix: debug from server recieving side, because client side prints serve
 that triggered by no data sent from server. So, print the command this client sent to server,
 and see what is happeneing
 ###FIXED###
+2. when user ended call the subprocess is still runnin, which casues the mic is alwasy occupied.
+need to fix the subprocess problem

@@ -54,35 +54,34 @@ print('server is starting')
 
 def sendingThread():
     while 1:
-        if (q.qsize() > 0):
-            queObj:QueueData = q.get()
-            clientAddr = queObj.clientAddr
-            data = queObj.data
-            with client_list_lock:
-                target_client = None
-                for obj in client_list:
-                    if obj.clientAddr == clientAddr:
-                        target_client = obj
-                        break
+        queObj:QueueData = q.get()
+        clientAddr = queObj.clientAddr
+        data = queObj.data
+        with client_list_lock:
+            target_client = None
+            for obj in client_list:
+                if obj.clientAddr == clientAddr:
+                    target_client = obj
+                    break
 
-                if target_client is None:
-                    # construct ClientOBJ
-                    target_client = Client(clientAddr=clientAddr, timestamp=time.time())
-                    client_list.append(target_client)
-                    print('append succced')
-                else:
-                    target_client.timestamp = time.time()
-                #print(client_list)
-
-                for obj in client_list:
-                    addr = obj.clientAddr
-                    if (addr != clientAddr):
-                        socket.sendto(data, addr)
-                        #print(f'send to addr: {addr}')
-                    #else:
-                        #print(f'update time stamp: {addr}')
-                        # !!! FOR TESTING CHANGE THIS LINE LATER
-                        #socket.sendto(data, addr)
+            if target_client is None:
+                # construct ClientOBJ
+                target_client = Client(clientAddr=clientAddr, timestamp=time.time())
+                client_list.append(target_client)
+                print('append succced')
+            else:
+                target_client.timestamp = time.time()
+            #print(client_list)
+        # sending loop should be outside of the lock
+        for obj in client_list:
+            addr = obj.clientAddr
+            if (addr != clientAddr):
+                socket.sendto(data, addr)
+                #print(f'send to addr: {addr}')
+            #else:
+                #print(f'update time stamp: {addr}')
+                # !!! FOR TESTING CHANGE THIS LINE LATER
+                #socket.sendto(data, addr)
         # else:
         #     client_list[:] = []
 

@@ -11,35 +11,15 @@ import json
 import subprocess
 import time
 
-#'170.64.145.153'
-SERVER_IP = '170.64.130.129'
-SERVER_PORT = 5063
-
+SERVER_IP = ''
+SERVER_PORT = 5062
 MTU = 1024
-
 # global var that always stores the ssrc
 ssrc: int = secrets.randbits(32)
 
-r_socket = socket(AF_INET, SOCK_STREAM)
+tls_socket = None
 
-context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH)
-
-context.minimum_version = ssl.TLSVersion.TLSv1_3
-
-context.check_hostname = True
-
-# get CA from current dir
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CERT_PATH = os.path.join(BASE_DIR, "cert.pem")
-context.load_verify_locations(cafile=CERT_PATH)
 dest_name = ''
-
-tls_socket = context.wrap_socket(r_socket, server_hostname=SERVER_IP)
-try:
-    tls_socket.connect((SERVER_IP, SERVER_PORT))
-    print("sever connect successfully")
-except Exception as e:
-    print(f"Could not connect to server. error: {e}")
 
 # helper function 
 def register_json_m(name: str) -> str:
@@ -88,6 +68,8 @@ def user_input(command, input) -> str:
             tls_socket.sendall(message.encode('utf-8'))
             print(message)
 
+
+#recv function
 client_process = None
 
 @eel.expose
@@ -196,11 +178,57 @@ def recv_thread():
                         
                         eel.displayCallingStatus(server_msg)
 
-eel.init('ui')
-
+# recv thread
 t_recv = threading.Thread(target=recv_thread)
 t_recv.daemon = True
-t_recv.start()
 
-eel.start('index.html', mode='custom', size=(700,500), port=9000, cmdline_args=['open', '-a', 'Safari', 'http://localhost:9000/index.html'])
+
+#block the program until user input the ip addr
+@eel.expose
+def starting_page(ip: str):
+    global server_sonnection_status
+    global SERVER_IP
+    global tls_socket
+    SERVER_IP = ip
+    print(f"user input: serverIP {SERVER_IP}")
+
+    try:
+        r_socket = socket(AF_INET, SOCK_STREAM)
+
+        context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH)
+
+        context.minimum_version = ssl.TLSVersion.TLSv1_3
+
+        context.check_hostname = True
+
+        # get CA from current dir
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        CERT_PATH = os.path.join(BASE_DIR, "cert.pem")
+        context.load_verify_locations(cafile=CERT_PATH)
+
+        tls_socket = context.wrap_socket(r_socket, server_hostname=SERVER_IP)
+
+        tls_socket.connect((SERVER_IP, SERVER_PORT))
+        print("sever connect successfully")
+        t_recv.start()
+        return True
+    
+    except TimeoutError:
+        print("Connection timed out. Wrong IP address?")
+        tls_socket = None
+        return False
+    
+    except Exception as e:
+        print(f"Could not connect to server. error: {e}")
+
+        if tls_socket:
+            try:
+                tls_socket.close()
+            except:
+                pass
+        tls_socket = None
+        return False
+    
+eel.init('ui')
+eel.start('startPage.html', mode='custom', size=(700,500), port=9000, cmdline_args=['open', '-a', 'Safari', 'http://localhost:9000/startPage.html'])
 #'index.html',

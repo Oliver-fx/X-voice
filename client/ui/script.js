@@ -258,3 +258,37 @@ function displayCallingStatus(status) {
 eel.expose(displayCallingStatus)
 eel.expose(displayRegistrationResult)
 eel.expose(displayConnectionResult)
+
+// starting page js
+async function handleConnect() {
+    const ipAddrInput = document.getElementById('ip-input');
+    const connectButton = document.getElementById('connect-button');
+
+    if (!ipAddrInput.value) {
+        Toastify({
+            text: "please enter a valid ip addr",
+            close: "true",
+            duration: 3000,
+            gravity: "bottom",
+            position: "right",
+            style: {
+                background: "#939496",
+            }
+        }).showToast()
+        return
+    }
+
+    ipAddrInput.disabled = true
+    connectButton.disabled = true
+
+    let status = await eel.starting_page(ipAddrInput.value)()
+
+    if (status == true) {
+        console.log("success")
+        window.location.href = "index.html"
+    } else {
+        ipAddrInput.disabled = false
+        connectButton.disabled =false
+        ipAddrInput.value = ""
+    }
+}

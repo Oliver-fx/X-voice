@@ -174,7 +174,7 @@ def check_packet(rtp_packet: bytes, addr: tuple[str, int]) -> bool:
             return False
 
     # print out error if current seq is greater than last seq a lot
-    if seq_num > last_seq_num + 10:
+    if seq_num > last_seq_num + 5:
         print('Network connection unstable: at least 10 packets have lost')
 
     last_seq_num = seq_num
@@ -219,22 +219,25 @@ def sendingThread(serverAddr: str, portNum: int):
 
 
 def recievingThread():
-
+    
     rx_policy = Policy(key=MASTER_KEY, ssrc_type=Policy.SSRC_ANY_INBOUND)
     rx_session = Session(policy=rx_policy)
     while True:
+        try:
+            recv_data, addr = socket.recvfrom(CHUNK)
 
-        recv_data, addr = socket.recvfrom(CHUNK)
+            
+            rtp_data = rx_session.unprotect(recv_data)
 
-        
-        rtp_data = rx_session.unprotect(recv_data)
+            check = check_packet(rtp_data, addr)
 
-        check = check_packet(rtp_data, addr)
-
-        if check == False:
+            if check == False:
+                continue
+            else:
+                recv_queue.put(rtp_data)
+        except Exception as e:
+            print(f"unkown packet from: {addr}, error: {e}")
             continue
-        else:
-            recv_queue.put(rtp_data)
 
 def playing_thread():
     stream_out = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, output=True, output_device_index=DEFAULT_OUTPUT, frames_per_buffer=CHUNK)

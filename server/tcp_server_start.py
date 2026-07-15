@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import json
+import random
 from socket import *
 import ssl
 import os
@@ -20,6 +21,8 @@ UDP_SERVER_PORT = "self define (int)"
 
 universal_count = 0
 
+# locked used for shared resources
+lock = threading.Lock()
 
 @dataclass
 class user_detail:
@@ -27,6 +30,12 @@ class user_detail:
     name: str
     s_socket: any
 
+@dataclass
+class udp_server_info:
+    udp_server_port: int
+    udp_server_subprocess: subprocess.Popen
+    u1_s_socket: any
+    u2_s_socket: any
 
 # user dictionary server will use this to coordinate new call
 users: dict[int, user_detail] = {}
@@ -35,16 +44,22 @@ name_ssrc_lookup: dict[str, int] = {}
 # ssrc to name dictonary
 ssrc_name_lookup: dict[int, str] = {}
 
+#udp_server_lookup
+'''
+This look up table is designed to manage multiple chatting sessions running
+at the same time. It makes tracking user details and managing server state much
+easier than before.
+'''
+# UDP server port is the id of each session
+udp_server_lookup: dict[int, udp_server_info] = {}
+
 r_socket = socket(AF_INET, SOCK_STREAM)
 r_socket.bind((DEFAULT_IP, DEFAULT_PORT))
 r_socket.listen()
 
-server_process = None
 
 def handle_request(s_socket):
-    global server_process
     global UDP_SERVER_PORT
-    global universal_count
     ssrc = None
     while True:
         try:
@@ -209,6 +224,19 @@ def handle_request(s_socket):
                         s_socket.sendall(message.encode('utf-8'))
 
                     case "spawn_udp_program":
+                        # check if user has sent udp server port
+                        try:
+                            json_message = json.loads(raw_json)
+                            udp_server_port = json_message['udp_server_port']
+                            # force the format into int
+                            udp_server_port = int(udp_server_port)
+                            if udp_server_port == None:
+                                print("could not extract udp server port from json string")
+                                continue
+                        except (json.JSONDecodeError, KeyError) as e:
+                            print("incorrect form sent to server, source unknown")
+                            continue
+
                         message = "ac\n"
                         message = message + "spawn" + '\n'
 
@@ -217,26 +245,56 @@ def handle_request(s_socket):
 
                         # spawn new udp program
                         server_process = subprocess.Popen(["python3", "udp_server.py", str(UDP_SERVER_PORT)])
-                        print("udp_server is running")
-                        # add a port for next connection
-                        universal_count += 1
-                        UDP_SERVER_PORT = int(UDP_SERVER_PORT) + universal_count
+                        if server_process == None:
+                            message = "ac\n"
+                            message = message + "disconnected" + '\n'
+
+                            dest_s_socket.sendall(message.encode('utf-8'))
+                            s_socket.sendall(message.encode('utf-8'))
+                            print("server start unsuccessfully")
+                        else:
+                            # add every new session into udp_server_lookup 
+                            with lock:
+                                udp_server_lookup[udp_server_port] = udp_server_info(udp_server_port=udp_server_port, udp_server_subprocess=server_process, u1_s_socket=s_socket, u2_s_socket=dest_s_socket)
+                                print("successfully added a new seesion into udp server lookup table")
+                            print("udp_server is running")
+                        with lock:
+                            # always find the unused port
+                            # due to current server size, it is impossible to fill all the ports
+                            while UDP_SERVER_PORT in udp_server_lookup:
+                                UDP_SERVER_PORT = random.randint(10000, 50000)
                     case "disconnect":
+                        # check if user has sent udp server port
+                        try:
+                            json_message = json.loads(raw_json)
+                            udp_server_port = json_message['udp_server_port']
+                            # force the format into int
+                            udp_server_port = int(udp_server_port)
+                            if udp_server_port == None:
+                                print("could not extract udp server port from json string")
+                                continue
+                        except (json.JSONDecodeError, KeyError) as e:
+                            print("incorrect form sent to server, source unknown")
+                            continue
+
+                        message = "ac\n"
+                        message = message + "disconnected" + '\n'
+
+                        # get u1 socket and u2 socket from the udp server lookup table
+                        u1_socket = udp_server_lookup[udp_server_port].u1_s_socket
+                        u2_socket = udp_server_lookup[udp_server_port].u2_s_socket
+
+                        u1_socket.sendall(message.encode('utf-8'))
+                        u2_socket.sendall(message.encode('utf-8'))
+
+                        # get server process from the lookup table
+                        server_process = udp_server_lookup[udp_server_port].udp_server_subprocess
+
                         server_process.kill()
                         server_process.wait()
                         server_process = None
 
                         print("udp server stopped")
-
-                        message = "ac\n"
-                        message = message + "disconnected" + '\n'
-
-                        dest_s_socket.sendall(message.encode('utf-8'))
-                        s_socket.sendall(message.encode('utf-8'))
-
-
-
-
 
     s_socket.close()
     if ssrc != None:

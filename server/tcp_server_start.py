@@ -296,6 +296,9 @@ def handle_request(s_socket):
 
                         print("udp server stopped")
 
+                        # delete this row
+                        del udp_server_lookup[udp_server_port]
+
     s_socket.close()
     if ssrc != None:
         if ssrc in users:

@@ -14,6 +14,7 @@ import time
 SERVER_IP = ''
 SERVER_PORT = 5062
 MTU = 1024
+UDP_SERVER_PORT:str = None
 # global var that always stores the ssrc
 ssrc: int = secrets.randbits(32)
 
@@ -42,10 +43,17 @@ def connection_json_m(name:str) -> str:
     return json_packet
 
 def answer_call_json_m(status:str) -> str:
-    json_message = {
-        "name" : dest_name,
-        "status": status
-    }
+    if status in ('spawn_udp_program', 'disconnected'):
+        json_message = {
+            "name" : dest_name,
+            "status": status,
+            "udp_server_port": UDP_SERVER_PORT
+        }
+    else:
+        json_message = {
+            "name" : dest_name,
+            "status": status
+        }
     json_packet = json.dumps(json_message, separators=(',', ':')) + '\n'
 
     return json_packet
@@ -76,6 +84,7 @@ client_process = None
 def recv_thread():
     global client_process
     global dest_name
+    global UDP_SERVER_PORT
     while True:
         raw_data = tls_socket.recv(MTU)
 
@@ -148,6 +157,10 @@ def recv_thread():
                         server_msg, udp_ip, udp_port = remaining_data.split('\n', 2)
                         udp_ip = udp_ip.split('\n', 1)[0]
                         udp_port = udp_port.split('\n', 1)[0]
+
+                        # store udp port into constant var
+                        UDP_SERVER_PORT = udp_port
+
                         print(f"addr: {udp_ip}, {udp_port}")
                         eel.displayCallingStatus(server_msg)
                     case "spawn":
@@ -171,7 +184,12 @@ def recv_thread():
                         # msg = "disconnected"
                         # eel.displayCallingStatus(msg)
                     case "disconnected":
+                        # reset udp server port
+                        UDP_SERVER_PORT = None
+                        #reset dest name
+                        dest_name = ''
                         print("server is down")
+                        # kill sub process and reset the variable
                         client_process.kill()
                         client_process.wait()
                         client_process = None

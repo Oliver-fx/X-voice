@@ -96,47 +96,150 @@
 /* starting page */
 
 .starting {
-    background-color: #9da391;
+    background-color: #1b3322;
+}
+
+.top-left-logo {
+    position: absolute;
+    top: 24px;         /* Distance from the very top of the screen */
+    left: 24px;        /* Distance from the very left of the screen */
+    z-index: 100;      /* Ensures the logo sits safely above everything else */
+}
+
+.top-left-logo img {
+    height: 40px;      /* Set this to your preferred size */
+    width: auto;       /* Keeps the original image proportions perfectly safe */
+    display: block;
 }
 
 .middle {
-    position:absolute;
-    top: 60%;
+    position: absolute;
+    top: 55%;                 /* FIX: Changed from 60% to 50% for true vertical alignment */
     left: 50%;
-    transform: translate(-60%, -50%);
+    transform: translate(-50%, -50%); /* FIX: Changed from -60% to -50% to perfectly align horizontally */
     flex-direction: column;
     display: flex;
-    align-items: center;
+    align-items: center;      /* Keeps the input and circle aligned down the exact center line */
+    justify-content: center;
     gap: 8px;
+}
+
+.circle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* height: 400px; */
+    position: relative;
+}
+
+.center-button {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: none;
+    background-color:#32533c;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    transition: all 0.3s ease-in-out;
+    font-size: 15px;
+    color: #ffffff;
+}
+
+.center-button span {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;         /* Bold and clean */
+    /* text-transform: uppercase; Matches the all-caps logo style */
+    letter-spacing: 1.5px;     /* Gives it a premium, spaced-out feel */
+    font-size: 13px;           /* Keeps it neat inside an 80px circle */
+}
+
+.moving-ring {
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background-color:rgba(255, 255, 255, 0.12); /* Translucent version of initial color */
+    z-index: -1; /* Sits behind the text layer */
+    
+    /* CRITICAL: Ignores the mouse so hover only triggers on the center circle */
+    pointer-events: none; 
+    
+    /* Handles the continuous inward and outward movement range */
+    animation: pulse-movement 2.5s infinite ease-in-out;
+    transition: all 0.4s ease-in-out;
+}
+
+@keyframes pulse-movement {
+    0% {
+        transform: scale(0.75);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+    100% {
+        transform: scale(0.75);
+    }
+}
+
+.center-button:hover {
+    background-color: #ffffff; 
+    color: #1b3322;
+}
+
+.center-button:hover .moving-ring {
+    animation-play-state: paused;
+    pointer-events: auto; /* The entire outer shape becomes part of the clickable zone */
 }
 
 #ip-input {
     background-color:beige;
-    border: 2px solid #9da391;
-    background-color: #9da391;
-    color:white;
+    border: none;
+    background-color: rgba(50, 83, 60, 0.15);
     outline: none;
     font-size: 18px;
+    color: #ffffff;
     transition: all 0.3s ease;
     width: 130px;
+    margin-top: 150px;
+
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;         /* Bold and clean */
+    /* text-transform: uppercase; Matches the all-caps logo style */
+    letter-spacing: 1.5px;     /* Gives it a premium, spaced-out feel */
+    font-size: 13px;           /* Keeps it neat inside an 80px circle */
 }
 
 #ip-input::placeholder {
-    color: #defa89;
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;         /* Bold and clean */
+    /* text-transform: uppercase; Matches the all-caps logo style */
+    letter-spacing: 1.5px;     /* Gives it a premium, spaced-out feel */
+    font-size: 13px;           /* Keeps it neat inside an 80px circle */
 }
 
+
 #connect-button {
-    background-color: #9da391;
+    background-color: #1b3322;
     border: none;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.1s;
     border-radius: 50px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     width: 80px;
-    font-size: 15px;
-    color: #defa89;
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;         /* Bold and clean */
+    /* text-transform: uppercase; Matches the all-caps logo style */
+    letter-spacing: 1.5px;     /* Gives it a premium, spaced-out feel */
+    font-size: 13px;           /* Keeps it neat inside an 80px circle */
+    margin-top: 4px;
 }
 
 #connect-button:hover {
-    background-color:#defa89;
+    background-color:#025f1e;
 }
+

@@ -9,10 +9,24 @@
         
         <script type="text/javascript" src="/eel.js"></script>
         <script src="script.js" defer></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
     </head>
     <body class="starting">
+        <div class="top-left-logo">
+            <img src="xvoice.png" alt="Xvoice Logo" />
+
+        </div>
         <div class="middle">
+            <div class="circle-container">
+                <button class="center-button" id="dynamic-button" onclick="XvoiceButton()">
+                    <div class="moving-ring"></div>
+                    <span>Xvoice</span>
+                </button>
+                
+            </div>
             <input type="text" id="ip-input" placeholder="Enter server IP">
             <button id="connect-button" onclick="handleConnect()">Connect</button>
         </div>

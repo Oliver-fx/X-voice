@@ -43,7 +43,7 @@ def connection_json_m(name:str) -> str:
     return json_packet
 
 def answer_call_json_m(status:str) -> str:
-    if status in ('spawn_udp_program', 'disconnected'):
+    if status in ('spawn_udp_program', 'disconnect'):
         json_message = {
             "name" : dest_name,
             "status": status,

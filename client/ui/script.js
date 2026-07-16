@@ -261,20 +261,22 @@ eel.expose(displayCallingStatus)
 eel.expose(displayRegistrationResult)
 eel.expose(displayConnectionResult)
 
-// starting page js
+// starting page js    ///////////////////////////////////////////////////////////////////// !!!!!!!!!!!!!!! /////
+window.connectionFlag = 0
 async function handleConnect() {
     const ipAddrInput = document.getElementById('ip-input');
     const connectButton = document.getElementById('connect-button');
-
+    
     if (!ipAddrInput.value) {
         Toastify({
             text: "please enter a valid ip addr",
-            close: "true",
+            close: false,
             duration: 3000,
             gravity: "bottom",
             position: "right",
             style: {
-                background: "#939496",
+                background: "#32533c",
+                borderRadius: "8px",
             }
         }).showToast()
         return
@@ -284,13 +286,53 @@ async function handleConnect() {
     connectButton.disabled = true
 
     let status = await eel.starting_page(ipAddrInput.value)()
-
+    
     if (status == true) {
         console.log("success")
-        window.location.href = "index.html"
+        Toastify({
+            text: "Server Connected!",
+            close: false,
+            duration: 3000,
+            gravity: "bottom",
+            position: "right",
+            style: {
+                background: "#32533c",
+                borderRadius: "8px",
+            }
+        }).showToast()
+        Toastify({
+            text: "Click Xvoice to start!",
+            close: false,
+            duration: 3000,
+            gravity: "bottom",
+            position: "right",
+            style: {
+                background: "#32533c",
+                borderRadius: "8px",
+            }
+        }).showToast()
+        connectionFlag = 1
     } else {
         ipAddrInput.disabled = false
         connectButton.disabled =false
         ipAddrInput.value = ""
+        Toastify({
+            text: "please enter a valid ip addr",
+            close: false,
+            duration: 3000,
+            gravity: "bottom",
+            position: "right",
+            style: {
+                background: "#32533c",
+                borderRadius: "8px",
+            }
+        }).showToast()
+    }
+}
+
+function XvoiceButton() {
+    //const XvoiceButtion = document.getElementById('dynamic-button')
+    if (window.connectionFlag == 1) {
+        window.location.href = "index.html"
     }
 }

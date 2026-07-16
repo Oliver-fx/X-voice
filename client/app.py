@@ -252,5 +252,5 @@ eel.init('ui')
 # for linux
 eel.start('startPage.html', mode='chrome', size=(700, 500), port=0)
 # for apple
-#eel.start('startPage.html', mode='custom', size=(700,500), port=9000, cmdline_args=['open', '-a', 'Safari', 'http://localhost:9000/startPage.html'])
+eel.start('startPage.html', mode='custom', size=(700,500), port=9000, cmdline_args=['open', '-a', 'Safari', 'http://localhost:9000/startPage.html'])
 #'index.html',

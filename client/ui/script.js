@@ -235,6 +235,8 @@ function displayCallingStatus(status) {
         name_input_box.disabled = false
         name_input_box.value = ""
         div.innerHTML = `<b>Call Ended</b>`
+        // forgot to recieve call flag here !!!!
+        window.callFlag = 0
     }
     
     setTimeout(() => {

@@ -219,10 +219,10 @@ function displayCallingStatus(status) {
         name_input_box.disabled = true
         div.innerHTML = `<b id="call_accepted">${status}</b>`
     } else if (status == "key") {
-        div.innerHTML = `<b id="call_accepted">recieveing master key...</b>`
-        // future impprovements: send confirmatin of key recieveing 
+        div.innerHTML = `<b id="call_accepted">recieving master key...</b>`
+        // future impprovements: send confirmatin for key recieving 
     } else if (status == "addr") {
-        div.innerHTML = `<b id="call_accepted">recieveing udp server addr...</b>`
+        div.innerHTML = `<b id="call_accepted">recieving udp server addr...</b>`
     } else if (status == "spawn") {
         div.innerHTML = `<b id="call_accepted">final establishment</b>`
     } else if (status == "connected") {

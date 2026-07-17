@@ -1,10 +1,10 @@
 # X-voice
 **Starts from socket, the blue print is to make a low-latency, high-encryption, and zero-knowledge voice chat app** 
 
-**Version**: v0.1 Early testing version    
-&emsp;&emsp;&emsp;&emsp;|__ Basic calling functionality, starting page designed, secondary page for testing purpose  
+**Version**: v 0.1 Early testing version    
+&emsp;&emsp;&emsp;&emsp;&emsp;|__ Basic calling functionality, starting page designed, secondary page for testing purpose  
 
-**Release**: v0.1 Eraly testeing version (only supports Windows) 
+**Release**: v 0.1 Eraly testeing version (only supports Windows) 
 
 ## Quick start
 ### **Development environment**  

@@ -16,8 +16,8 @@ DEFAULT_IP = "0.0.0.0"
 DEFAULT_PORT = 5062
 SUCCESS_RETURN = 'ok'
 MTU = 1024
-UDP_SERVER_IP = "self define (str)"
-UDP_SERVER_PORT = "self define (int)"
+UDP_SERVER_IP = "yourServerIP"
+UDP_SERVER_PORT = "10000"
 
 universal_count = 0
 

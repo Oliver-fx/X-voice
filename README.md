@@ -13,6 +13,9 @@
 - Additional Libraries: python-eel, pyaudio, opuslib, pylibsrtp
 
 ### **Setup**  
+Install Python dependencies:
+`pip install -r requirements.txt`  
+
 Once your python environment includes all the libraries listed above, you can start running the program using the following commands:
 
 **Windows**:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;**MacOS | Linux**:  

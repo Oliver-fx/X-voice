@@ -18,11 +18,12 @@ Once your python environment includes all the libraries listed above, you can st
 **Windows**:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;**MacOS | Linux**:  
 `python app.py`&emsp;&emsp;&emsp;&emsp;`python3 app.py`  
 
-**Server SSL Setup**
-IMPORTANT MUST GENERATE FOLLOWING FILES ON SERVER  
-Generate the key.pem file  
-`openssl genrsa -out key.pem 2048`  
-Generate the cert.pem file using previous generated key.pem  
+**Server SSL Setup**  
+IMPORTANT MUST GENERATE FOLLOWING FILES ON YOUR SERVER  
+Generate the key.pem file:  
+`openssl genrsa -out key.pem 2048` 
+  
+Generate the cert.pem file using previous generated key.pem:  
 `openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout key.pem -out cert.pem -subj "/CN=yourIP" -addext "subjectAltName=IP:yourIP"`  
   
 Place your server generated cert.pem into the client folder, run your server and you are good to go!  

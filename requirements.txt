@@ -1,0 +1,4 @@
+python-eel
+pyaudio
+opuslib
+pylibsrtp

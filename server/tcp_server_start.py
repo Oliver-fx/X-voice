@@ -16,7 +16,7 @@ DEFAULT_IP = "0.0.0.0"
 DEFAULT_PORT = 5062
 SUCCESS_RETURN = 'ok'
 MTU = 1024
-UDP_SERVER_IP = "yourServerIP"
+UDP_SERVER_IP = "Server IP"
 UDP_SERVER_PORT = "10000"
 
 universal_count = 0
@@ -304,12 +304,12 @@ def handle_request(s_socket):
                 try:
                     json_message = json.loads(raw_json)
                     ssrc = json_message['ssrc']
-                    text = json_message['text']
+                    text = json_message['gtxt']
                 except (json.JSONDecodeError, KeyError) as e:
                     print("incorrect form sent to server, source unknown")
                     continue
 
-                sender_name = ssrc_name_lookup.get(ssrc)
+                sender_name = ssrc_name_lookup.get(ssrc, "Unknown")
                 message = "gtxt\n"
                 message = message + sender_name + ": " + text + '\n'
                 for user_details in users.values():

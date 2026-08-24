@@ -15,26 +15,46 @@
         <script src="script.js" defer></script>
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
     </head>
     <body>
-        <div class="container">
-            <div id="col_1">
-                <!--testing ui for register function-->
-                <h2>button 1 register button testing ui</h2>
-                <input id="name_input" type="text" placeholder="name">
-                <button id="r_button" onclick="registerButton()">click to register on server</button>
+        <div class="page-layout">
+            <div class="top-left-logo">
+                <img src="xvoice.png" alt="Xvoice Logo" />
             </div>
-            <div id = "col_2">
-                <!--testing ui for calling function-->
-                <h2>button 2 calling button testing ui</h2>
-                <input id= "name_to_call" type="text" placeholder="name">
-                <button id="c_button" onclick="callingButton()">Call</button>
+            <div class="nav-bar">
+                <div id="nav-content">
+                    <button class="nav-box" id="voice-chatting">Voice chatting</button>
+                    <button class="nav-box" id="video-chatting">Video chatting (soon)</button>
+                    <button class="nav-box" id="setting">Settings</button>
+                    <button class="nav-box" id="about">About</button>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="container-1">
+                    <div id="col_1">
+                        <!--testing ui for register function-->
+                        <h2 class="input-box-title">User Name</h2>
+                        <input id="name_input" type="text" placeholder=" name">
+                        <button class="calling-button" id="r_button" onclick="registerButton()">register!</button>
+                    </div>
+                    <div id = "col_2">
+                        <!--testing ui for calling function-->
+                        <h2 class="input-box-title">Call</h2>
+                        <input id= "name_to_call" type="text" placeholder=" name">
+                        <button class="calling-button" id="c_button" onclick="callingButton()">Call</button>
+                    </div>
+                </div>
+                <div class="container-2">
+                    <div id="connection_notification"></div>
+                    <div id="connection_status"></div>
+                </div>
+                <div class="container-3" id="container-3">
+                    
+                </div>
             </div>
         </div>
-
-        <div id="connection_notification"></div>
-        
-        <div id="connection_status"></div>
 
     </body>
 </html>

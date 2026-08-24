@@ -13,6 +13,7 @@ function registerButton() {
 function displayRegistrationResult(status) {
     let button = document.getElementById("r_button");
     let name_input_box= document.getElementById("name_input")
+    let container3 = document.getElementById('container-3')
     if (status == "ok") {
         name_input_box.disabled = true
         try {
@@ -23,13 +24,20 @@ function displayRegistrationResult(status) {
                 gravity: "bottom",
                 position: "right",
                 style: {
-                    background: "#939496",
+                    background: "#32533c",
+                    borderRadius: "8px",
                 }
             }).showToast()
         } catch (e) {
 
         }
         //alert("you have successfully registered on server");
+        container3.innerHTML = `<div id="chatting-box"></div>
+                    <form id="chat-form">
+                        <input id="gtxt-input" type="text" placeholder="Type a message..." autocomplete="off">
+                        <button id="gtxt-send" onclick="handleSubmitEvent()" type="submit">Send</button>
+                    </form>`
+        
     } else {
         try {
             Toastify({
@@ -39,7 +47,8 @@ function displayRegistrationResult(status) {
                 gravity: "bottom",
                 position: "right",
                 style: {
-                    background: "#939496",
+                    background: "#32533c",
+                    borderRadius: "8px",
                 }
             }).showToast()
         } catch (e) {
@@ -77,7 +86,8 @@ function displayConnectionResult(status) {
                 gravity: "bottom",
                 position: "right",
                 style: {
-                    background: "#939496",
+                    background: "#32533c",
+                    borderRadius: "8px",
                 }
             }).showToast()
         } catch (e) {
@@ -140,7 +150,8 @@ function displayConnectionResult(status) {
                 gravity: "bottom",
                 position: "right",
                 style: {
-                    background: "#939496",
+                    background: "#32533c",
+                    borderRadius: "8px",
                 }
             }).showToast()
         } catch (e) {
@@ -273,9 +284,58 @@ function displayCallingStatus(status) {
     }, 1000);
 }
 
+function handleSubmitEvent() {
+    const chatForm = document.getElementById('chat-form')
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault()
+        handleGlobalTextSending()
+    })
+}
+
+function handleGlobalTextSending() {
+    const inputElement = document.getElementById("gtxt-input")
+    let text = inputElement.value
+    if (text == '') {
+        return
+    }
+
+    if (text.length > 200) {
+        Toastify({
+            text: "maximum text length 200 characters",
+            close: false,
+            duration: 3000,
+            gravity: "bottom",
+            position: "right",
+            style: {
+                background: "#32533c",
+                borderRadius: "8px",
+            }
+        }).showToast()
+        return
+    }
+
+    eel.user_input("gtxt", text)
+
+    inputElement.value = ''
+
+}
+
+function displayGlobalText(text) {
+    let displayWindow = document.getElementById("chatting-box")
+    const msgDiv = document.createElement('div')
+
+    msgDiv.classList.add('chat-message')
+    msgDiv.textContent = text
+
+    displayWindow.appendChild(msgDiv)
+    displayWindow.scrollTop = displayWindow.scrollHeight
+}
+
+
 eel.expose(displayCallingStatus)
 eel.expose(displayRegistrationResult)
 eel.expose(displayConnectionResult)
+eel.expose(displayGlobalText)
 
 // starting page js    ///////////////////////////////////////////////////////////////////// !!!!!!!!!!!!!!! /////
 window.connectionFlag = 0

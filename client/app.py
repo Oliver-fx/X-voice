@@ -58,6 +58,16 @@ def answer_call_json_m(status:str) -> str:
 
     return json_packet
 
+def gtxt_json_m(text:str) -> str:
+    json_message = {
+        "ssrc" : ssrc,
+        "gtxt" : text
+    }
+
+    json_packet = json.dumps(json_message, separators=(',', ':')) + '\n'
+
+    return json_packet
+
 @eel.expose
 def user_input(command, input) -> str:
     match command:
@@ -75,8 +85,12 @@ def user_input(command, input) -> str:
             message = message + answer_call_json_m(input)
             tls_socket.sendall(message.encode('utf-8'))
             print(message)
-
-
+        case 'gtxt':
+            message = "gtxt\n"
+            message = message + gtxt_json_m(input)
+            tls_socket.sendall(message.encode('utf-8'))
+            print(message)
+            
 #recv function
 client_process = None
 
@@ -195,6 +209,10 @@ def recv_thread():
                         client_process = None
                         
                         eel.displayCallingStatus(server_msg)
+            case "gtxt":
+                if '\n' in remaining_data:
+                    server_msg = remaining_data.split('\n', 1)[0]
+                
 
 # recv thread
 t_recv = threading.Thread(target=recv_thread)

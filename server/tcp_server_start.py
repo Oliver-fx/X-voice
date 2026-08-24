@@ -298,7 +298,26 @@ def handle_request(s_socket):
 
                         # delete this row
                         del udp_server_lookup[udp_server_port]
+            case 'gtxt':
+                if '\n' in remaining_data:
+                    raw_json = remaining_data.split('\n', 1)[0]
+                try:
+                    json_message = json.loads(raw_json)
+                    ssrc = json_message['ssrc']
+                    text = json_message['text']
+                except (json.JSONDecodeError, KeyError) as e:
+                    print("incorrect form sent to server, source unknown")
+                    continue
 
+                sender_name = ssrc_name_lookup.get(ssrc)
+                message = "gtxt\n"
+                message = message + sender_name + ": " + text + '\n'
+                for user_details in users.values():
+                    user_details.s_socket.sendall(message.encode('utf-8'))
+                print("message synced to all users")
+
+
+            
     s_socket.close()
     if ssrc != None:
         if ssrc in users:

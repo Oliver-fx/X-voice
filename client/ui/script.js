@@ -15,28 +15,36 @@ function displayRegistrationResult(status) {
     let name_input_box= document.getElementById("name_input")
     if (status == "ok") {
         name_input_box.disabled = true
-        Toastify({
-            text: "you have successfully registered on server",
-            close: "true",
-            duration: 3000,
-            gravity: "bottom",
-            position: "right",
-            style: {
-                background: "#939496",
-            }
-        }).showToast()
+        try {
+            Toastify({
+                text: "you have successfully registered on server",
+                close: "true",
+                duration: 3000,
+                gravity: "bottom",
+                position: "right",
+                style: {
+                    background: "#939496",
+                }
+            }).showToast()
+        } catch (e) {
+
+        }
         //alert("you have successfully registered on server");
     } else {
-        Toastify({
-            text: status,
-            close: "true",
-            duration: 3000,
-            gravity: "bottom",
-            position: "right",
-            style: {
-                background: "#939496",
-            }
-        }).showToast()
+        try {
+            Toastify({
+                text: status,
+                close: "true",
+                duration: 3000,
+                gravity: "bottom",
+                position: "right",
+                style: {
+                    background: "#939496",
+                }
+            }).showToast()
+        } catch (e) {
+
+        }
         //alert(status);
         button.disabled = false;
     }
@@ -61,16 +69,20 @@ function displayConnectionResult(status) {
     let name_input_box = document.getElementById("name_to_call")
 
     if (status == "user is not registered to server") {
-        Toastify({
-            text: "The user you are connecting to is not registered on server",
-            close: "true",
-            duration: 3000,
-            gravity: "bottom",
-            position: "right",
-            style: {
-                background: "#939496",
-            }
-        }).showToast()
+        try {
+            Toastify({
+                text: "The user you are connecting to is not registered on server",
+                close: "true",
+                duration: 3000,
+                gravity: "bottom",
+                position: "right",
+                style: {
+                    background: "#939496",
+                }
+            }).showToast()
+        } catch (e) {
+
+        }
         //alert("The user you are connecting to is not registered on server")
         button.disabled = false
         name_input_box.value = ""
@@ -120,16 +132,20 @@ function displayConnectionResult(status) {
 
         }, 1000);
     } else if (status == "you can't call yourself") {
-        Toastify({
-            text: "you can't call yourself",
-            close: "true",
-            duration: 3000,
-            gravity: "bottom",
-            position: "right",
-            style: {
-                background: "#939496",
-            }
-        }).showToast()
+        try {
+            Toastify({
+                text: "you can't call yourself",
+                close: "true",
+                duration: 3000,
+                gravity: "bottom",
+                position: "right",
+                style: {
+                    background: "#939496",
+                }
+            }).showToast()
+        } catch (e) {
+            
+        }
         //alert("you can't call yourself")
         button.disabled = false
         name_input_box.value = ""
@@ -219,10 +235,10 @@ function displayCallingStatus(status) {
         name_input_box.disabled = true
         div.innerHTML = `<b id="call_accepted">${status}</b>`
     } else if (status == "key") {
-        div.innerHTML = `<b id="call_accepted">recieveing master key...</b>`
-        // future impprovements: send confirmatin of key recieveing 
+        div.innerHTML = `<b id="call_accepted">recieving master key...</b>`
+        // future impprovements: send confirmatin for key recieving 
     } else if (status == "addr") {
-        div.innerHTML = `<b id="call_accepted">recieveing udp server addr...</b>`
+        div.innerHTML = `<b id="call_accepted">recieving udp server addr...</b>`
     } else if (status == "spawn") {
         div.innerHTML = `<b id="call_accepted">final establishment</b>`
     } else if (status == "connected") {
@@ -268,17 +284,21 @@ async function handleConnect() {
     const connectButton = document.getElementById('connect-button');
     
     if (!ipAddrInput.value) {
-        Toastify({
-            text: "please enter a valid ip addr",
-            close: false,
-            duration: 3000,
-            gravity: "bottom",
-            position: "right",
-            style: {
-                background: "#32533c",
-                borderRadius: "8px",
-            }
-        }).showToast()
+        try {
+            Toastify({
+                text: "please enter a valid ip addr",
+                close: false,
+                duration: 3000,
+                gravity: "bottom",
+                position: "right",
+                style: {
+                    background: "#32533c",
+                    borderRadius: "8px",
+                }
+            }).showToast()
+        } catch (e) {
+            console.log("can not laod toastify")
+        }
         return
     }
 
@@ -289,44 +309,54 @@ async function handleConnect() {
     
     if (status == true) {
         console.log("success")
-        Toastify({
-            text: "Server Connected!",
-            close: false,
-            duration: 3000,
-            gravity: "bottom",
-            position: "right",
-            style: {
-                background: "#32533c",
-                borderRadius: "8px",
-            }
-        }).showToast()
-        Toastify({
-            text: "Click Xvoice to start!",
-            close: false,
-            duration: 3000,
-            gravity: "bottom",
-            position: "right",
-            style: {
-                background: "#32533c",
-                borderRadius: "8px",
-            }
-        }).showToast()
+        try{
+            Toastify({
+                text: "Server Connected!",
+                close: false,
+                duration: 3000,
+                gravity: "bottom",
+                position: "right",
+                style: {
+                    background: "#32533c",
+                    borderRadius: "8px",
+                }
+            }).showToast()
+            Toastify({
+                text: "Click Xvoice to start!",
+                close: false,
+                duration: 3000,
+                gravity: "bottom",
+                position: "right",
+                style: {
+                    background: "#32533c",
+                    borderRadius: "8px",
+                }
+            }).showToast()
+
+        } catch (e) {
+            console.log("can not load toastify")
+        }
+
         connectionFlag = 1
     } else {
         ipAddrInput.disabled = false
         connectButton.disabled =false
         ipAddrInput.value = ""
-        Toastify({
-            text: "please enter a valid ip addr",
-            close: false,
-            duration: 3000,
-            gravity: "bottom",
-            position: "right",
-            style: {
-                background: "#32533c",
-                borderRadius: "8px",
-            }
-        }).showToast()
+        try {
+            Toastify({
+                text: "please enter a valid ip addr",
+                close: false,
+                duration: 3000,
+                gravity: "bottom",
+                position: "right",
+                style: {
+                    background: "#32533c",
+                    borderRadius: "8px",
+                }
+            }).showToast()
+        } catch (e) {
+            console.log("can not load toastify")
+        }
     }
 }
 

@@ -11,3 +11,6 @@ and see what is happeneing
 ###FIXED###
 2. when user ended call the subprocess is still runnin, which casues the mic is alwasy occupied.
 need to fix the subprocess problem
+###FIXED###
+3. When one user is calling with another user. If one of them click close tab directly without ending
+the call, the udp client will not stop itself.

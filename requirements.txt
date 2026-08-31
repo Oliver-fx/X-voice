@@ -1,4 +1,4 @@
-python-eel
+eel
 pyaudio
 opuslib
 pylibsrtp

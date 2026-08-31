@@ -8,6 +8,7 @@ import threading
 import secrets
 import base64
 import subprocess
+import time
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CERT_PATH = os.path.join(BASE_DIR, "cert.pem")
@@ -309,9 +310,9 @@ def handle_request(s_socket):
                     print("incorrect form sent to server, source unknown")
                     continue
 
-                sender_name = ssrc_name_lookup.get(ssrc, "Unknown")
+                sender_name = ssrc_name_lookup.get(ssrc)
                 message = "gtxt\n"
-                message = message + sender_name + ": " + text + '\n'
+                message = message + sender_name + ": " + text + '\n' + time.asctime() + '\n'
                 for user_details in users.values():
                     user_details.s_socket.sendall(message.encode('utf-8'))
                 print("message synced to all users")

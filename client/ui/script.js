@@ -320,14 +320,21 @@ function handleGlobalTextSending() {
 
 }
 
-function displayGlobalText(text) {
+function displayGlobalText(text, timestamp) {
     let displayWindow = document.getElementById("chatting-box")
     const msgDiv = document.createElement('div')
+    const timestampDiv = document.createElement('div')
 
     msgDiv.classList.add('chat-message')
     msgDiv.textContent = text
-
     displayWindow.appendChild(msgDiv)
+
+    timestampDiv.classList.add('timestamp-message')
+    timestampDiv.textContent = timestamp
+    displayWindow.appendChild(timestampDiv)
+
+    // add snap chat feature
+
     displayWindow.scrollTop = displayWindow.scrollHeight
 }
 

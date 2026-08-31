@@ -269,13 +269,20 @@ body {
     color: #1b3322;
 }
 .chat-message {
-    word-break: break-word;
+    /* word-break: break-word; */
 
     color: rgb(100, 99, 99);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 14px;
     line-height: 16px;
 }
+.timestamp-message {
+    color: rgb(100, 99, 99);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 9px;
+    line-height: 14px;
+}
+
 #voice-chatting {
     margin-top: 80px;
 }

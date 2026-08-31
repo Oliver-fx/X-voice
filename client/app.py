@@ -70,7 +70,7 @@ def gtxt_json_m(text:str) -> str:
 
 @eel.expose
 def user_input(command, input):
-    if len(input) > 40:
+    if len(input) > 200:
         print("name length too long")
         eel.displayRegistrationResult("input length too long")
         return
@@ -216,8 +216,10 @@ def recv_thread():
             case "gtxt":
                 if '\n' in remaining_data:
                     server_msg = remaining_data.split('\n', 1)[0]
-                eel.displayGlobalText(server_msg)
-                print(f"GTXT {server_msg}")
+                    timestamp = remaining_data.split('\n', 1)[1]
+
+                eel.displayGlobalText(server_msg, timestamp)
+                print(f"GTXT {server_msg} timestamp {timestamp}")
 
 # recv thread
 t_recv = threading.Thread(target=recv_thread)
@@ -273,7 +275,7 @@ def starting_page(ip: str):
 eel.init('ui')
 # If you want to use linux then comment out apple, vice versa
 # for linux
-eel.start('startPage.html', mode='chrome', size=(700, 650), port=0, block=True)
+#eel.start('startPage.html', mode='chrome', size=(700, 650), port=0, block=True)
 # for apple
 eel.start('startPage.html', mode='custom', size=(700,500), port=9000, cmdline_args=['open', '-a', 'Safari', 'http://localhost:9000/startPage.html'])
 #'index.html',
